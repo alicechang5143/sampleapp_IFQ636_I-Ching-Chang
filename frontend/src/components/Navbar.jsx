@@ -1,44 +1,80 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
 
-const Navbar = () => {
-  const { user, logout } = useAuth();
+function Navbar() {
   const navigate = useNavigate();
+  const user = JSON.parse(localStorage.getItem('user'));
 
   const handleLogout = () => {
-    logout();
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
     navigate('/login');
   };
 
   return (
-    <nav className="bg-blue-600 text-white p-4 flex justify-between items-center">
-      <Link to="/" className="text-2xl font-bold">Your apps name</Link>
+    <div style={styles.navbar}>
+      <h2 style={styles.title}>Event Booking</h2>
+
       <div>
         {user ? (
           <>
-            <Link to="/tasks" className="mr-4">CRUD</Link>
-            <Link to="/profile" className="mr-4">Profile</Link>
-            <button
-              onClick={handleLogout}
-              className="bg-red-500 px-4 py-2 rounded hover:bg-red-700"
-            >
+            <span style={styles.userText}>Hello, {user.name}</span>
+            <button style={styles.login} onClick={handleLogout}>
               Logout
             </button>
           </>
         ) : (
           <>
-            <Link to="/login" className="mr-4">Login</Link>
-            <Link
-              to="/register"
-              className="bg-green-500 px-4 py-2 rounded hover:bg-green-700"
-            >
-              Register
+            <Link to="/login" style={{ textDecoration: 'none' }}>
+              <button style={styles.login}>Login</button>
+            </Link>
+
+            <Link to="/register" style={{ textDecoration: 'none' }}>
+              <button style={styles.register}>Register</button>
             </Link>
           </>
         )}
       </div>
-    </nav>
+    </div>
   );
+}
+
+const styles = {
+  navbar: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: '16px 24px',
+    background: '#ffffff',
+    borderBottom: '1px solid #eee',
+  },
+  title: {
+    color: '#FF4D00',
+    fontWeight: '700',
+    fontSize: '24px',
+    margin: 0,
+  },
+  userText: {
+    marginRight: '10px',
+    color: '#444',
+    fontWeight: '500',
+  },
+  login: {
+    marginRight: '10px',
+    padding: '8px 16px',
+    border: '1px solid #FF4D00',
+    background: 'white',
+    color: '#FF4D00',
+    borderRadius: '8px',
+    cursor: 'pointer',
+  },
+  register: {
+    padding: '8px 16px',
+    border: 'none',
+    background: '#FF4D00',
+    color: 'white',
+    borderRadius: '8px',
+    cursor: 'pointer',
+  },
 };
 
 export default Navbar;

@@ -1,46 +1,70 @@
 import { useState } from 'react';
-import { useAuth } from '../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import axiosInstance from '../axiosConfig';
+import './authPage.css';
 
 const Login = () => {
   const [formData, setFormData] = useState({ email: '', password: '' });
-  const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     try {
-      const response = await axiosInstance.post('/api/auth/login', formData);
-      login(response.data);
-      navigate('/tasks');
+      const res = await axiosInstance.post('/api/auth/login', formData);
+
+      localStorage.setItem('token', res.data.token);
+      localStorage.setItem('user', JSON.stringify(res.data));
+
+      alert('Login successful.');
+      navigate('/');
     } catch (error) {
-      alert('Login failed. Please try again.');
+      alert('Login failed. Please check your email and password.');
     }
   };
 
   return (
-    <div className="max-w-md mx-auto mt-20">
-      <form onSubmit={handleSubmit} className="bg-white p-6 shadow-md rounded">
-        <h1 className="text-2xl font-bold mb-4 text-center">Login</h1>
-        <input
-          type="email"
-          placeholder="Email"
-          value={formData.email}
-          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-          className="w-full mb-4 p-2 border rounded"
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={formData.password}
-          onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-          className="w-full mb-4 p-2 border rounded"
-        />
-        <button type="submit" className="w-full bg-blue-600 text-white p-2 rounded">
-          Login
-        </button>
-      </form>
+    <div className="auth-page">
+      <div className="auth-card">
+        <h1 className="auth-brand">Event Booking</h1>
+        <h2 className="auth-title">Sign in to your account</h2>
+
+        <form onSubmit={handleSubmit} className="auth-form">
+          <div className="auth-group">
+            <label>Email</label>
+            <input
+              type="email"
+              placeholder="123@email.com"
+              value={formData.email}
+              onChange={(e) =>
+                setFormData({ ...formData, email: e.target.value })
+              }
+              required
+            />
+          </div>
+
+          <div className="auth-group">
+            <label>Password</label>
+            <input
+              type="password"
+              placeholder="1234"
+              value={formData.password}
+              onChange={(e) =>
+                setFormData({ ...formData, password: e.target.value })
+              }
+              required
+            />
+          </div>
+
+          <button type="submit" className="auth-btn">
+            Login
+          </button>
+        </form>
+
+        <p className="auth-footer">
+          Don&apos;t have an account? <Link to="/register">Sign up</Link>
+        </p>
+      </div>
     </div>
   );
 };
