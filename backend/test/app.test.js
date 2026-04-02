@@ -1,8 +1,8 @@
-import chai from "chai";
-import chaiHttp from "chai-http";
-import app from "../server.js";
+const chai = require("chai");
+const chaiHttp = require("chai-http");
+const app = require("../server");
 
-const { expect } = chai;
+const expect = chai.expect;
 chai.use(chaiHttp);
 
 describe("Basic API Test", () => {
