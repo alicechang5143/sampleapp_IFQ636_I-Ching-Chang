@@ -17,7 +17,12 @@ app.use('/api/auth', require('./routes/authRoutes'));
 const bookingRoutes = require('./bookingRoute');
 app.use('/api/bookings', bookingRoutes);
 
+// Export the app object for testing
 if (require.main === module) {
+    if (process.env.NODE_ENV !== "test") {
+        connectDB();
+    }
+
     const PORT = process.env.PORT || 5001;
     app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 }
