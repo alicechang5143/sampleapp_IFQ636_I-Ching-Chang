@@ -10,44 +10,33 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
+    environment: prod
 
     steps:
-      - name: Checkout code
+      - name: Checkout Code
         uses: actions/checkout@v2
 
-      - name: Set up Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v2
         with:
           node-version: '18'
 
-      - name: Install dependencies (backend)
+      - name: Install Backend Dependencies
         run: |
           cd backend
           npm install
 
-      - name: Run tests (backend)
+      - name: Run Backend Tests
         run: |
           cd backend
           npm test
 
-  deploy:
-    runs-on: self-hosted
-    needs: build
-    if: github.ref == 'refs/heads/main'
-    environment: prod
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Deploy to EC2
+      - name: Create .env File
         run: |
-          cd ~/sampleapp_IFQ636_I-Ching-Chang
-          git pull origin main
-          cd backend
-          npm install
-          pm2 restart backend
-          cd ../frontend
-          npm install
-          npm run build
+          echo "MONGO_URL=${{ secrets.MONGO_URL }}" > ~/sampleapp_IFQ636_I-Ching-Chang/backend/.env
+          echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> ~/sampleapp_IFQ636_I-Ching-Chang/backend/.env
+          echo "PORT=${{ secrets.PORT }}" >> ~/sampleapp_IFQ636_I-Ching-Chang/backend/.env
+
+      - name: Restart PM2
+        run: pm2 restart backend
