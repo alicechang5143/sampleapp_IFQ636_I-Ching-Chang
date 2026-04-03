@@ -31,23 +31,23 @@ jobs:
           cd backend
           npm test
 
-deploy:
-  runs-on: self-hosted
-  needs: build
-  if: github.ref == 'refs/heads/main'
-  environment: prod
+  deploy:
+    runs-on: self-hosted
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    environment: prod
 
-  steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    - name: Deploy to EC2
-      run: |
-        cd ~/sampleapp_IFQ636_I-Ching-Chang
-        git pull origin main
-        cd backend
-        npm install
-        pm2 restart backend
-        cd ../frontend
-        npm install
-        npm run build
+      - name: Deploy to EC2
+        run: |
+          cd ~/sampleapp_IFQ636_I-Ching-Chang
+          git pull origin main
+          cd backend
+          npm install
+          pm2 restart backend
+          cd ../frontend
+          npm install
+          npm run build
